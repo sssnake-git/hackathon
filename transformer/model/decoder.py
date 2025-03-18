@@ -51,29 +51,57 @@ class DecoderLayer(nn.Module):
         return x
 
 class Decoder(nn.Module):
-    def __init__(self, dec_voc_size, max_len, d_model, ffn_hidden, n_head, n_layers, drop_prob, device):
+    '''
+    Decoder with embedding and decoder-layer.
+
+    vocab_size: vocabulary size model can recognize
+        BERT: 30000, GPT-3: 50000
+    max_len: maximum sequence length on transformer can handle
+        BERT: 512, GPT-2: 1024, GPT-3: 2048
+    d_model: vector dimension after each token embedding
+        Transformer-Base: 512, BERT-base: 768, BERT-large: 1024, GPT-3: 4096
+    ffn_hidden: feed forward hidden size, usually d_model * 4
+        Transformer-Base: 2048, BERT-base: 3072, BERT-large: 4096, GPT-3: 16384
+    n_head: number of attention heads
+        Transformer-Base: 8, BERT-base: 12, BERT-large: 16, GPT-3: 96
+        d_model must be divided by n_head
+    n_layers: number of encoder layers
+        Small Transformer: 6, BERT-base: 12, BERT-large: 24, GPT-3: 96
+    drop_prob: dropout probability
+    device: torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    '''
+    def __init__(self, decoder_vocab_size, max_len, d_model, ffn_hidden, n_head, n_layer, drop_prob, device):
         super().__init__()
         self.embedding = Embedding(d_model = d_model,
                                 drop_prob = drop_prob,
                                 max_len = max_len,
-                                vocab_size = dec_voc_size,
+                                vocab_size = decoder_vocab_size,
                                 device = device)
 
         self.layers = nn.ModuleList([DecoderLayer(d_model = d_model,
                                                 ffn_hidden = ffn_hidden,
                                                 n_head = n_head,
                                                 drop_prob = drop_prob)
-                                     for _ in range(n_layers)])
+                                     for _ in range(n_layer)])
 
-        self.linear = nn.Linear(d_model, dec_voc_size)
+        self.linear = nn.Linear(d_model, decoder_vocab_size)
 
-    def forward(self, trg, enc_src, trg_mask, src_mask):
-        trg = self.embedding(trg)
+    def forward(self, target, enc_src, target_mask, src_mask):
+        '''
+        target: target sequence input, tokenized sequence of target language
+            shape: (batch_size, target_seq_len)
+        encoder_src: encoder hidden states
+            shape: (batch_size, src_seq_len, d_model)
+        target_mask: target sequence mask, prevent decoder foresees future info during training
+            shape: (batch_size, target_seq_len)
+        src_mask: source sequence mask, ignore `<PAD>` tokens from input, prevent info leak
+        '''
+        target = self.embedding(target)
 
         for layer in self.layers:
-            trg = layer(trg, enc_src, trg_mask, src_mask)
+            target = layer(target, enc_src, target_mask, src_mask)
 
         # pass to LM head
-        output = self.linear(trg)
+        output = self.linear(target)
         return output
 

@@ -1,4 +1,9 @@
 # mac file
 .DS_Store
 
-# 
+# cache
+*.pyc
+
+# transformer
+transformer/__pycache__
+transformer/data

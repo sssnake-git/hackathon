@@ -11,13 +11,10 @@ class EncoderLayer(nn.Module):
     Encoder layer: multi head attention and add norm.
 
     d_model: vector dimension after each token embedding
-        Transformer-Base: 512, BERT-base: 768, BERT-large: 1024, GPT-3: 4096
-    ffn_hidden: Feed Forward Hidden Size, d_model * 4
-        Transformer-Base: 2048, BERT-base: 3072, BERT-large: 4096, GPT-3: 16384
+    ffn_hidden: feed Forward fidden Size, d_model * 4
     n_head: Number of Attention Heads
-        Transformer-Base: 8, BERT-base: 12, BERT-large: 16, GPT-3: 96
         d_model must be divided by n_head
-    drop_prob: Dropout Probability)
+    drop_prob: dropout probability
     '''
     def __init__(self, d_model, ffn_hidden, n_head, drop_prob):
         super(EncoderLayer, self).__init__()
@@ -57,17 +54,17 @@ class Encoder(nn.Module):
         BERT: 512, GPT-2: 1024, GPT-3: 2048
     d_model: vector dimension after each token embedding
         Transformer-Base: 512, BERT-base: 768, BERT-large: 1024, GPT-3: 4096
-    ffn_hidden: Feed Forward Hidden Size, d_model * 4
+    ffn_hidden: feed forward hidden size, usually d_model * 4
         Transformer-Base: 2048, BERT-base: 3072, BERT-large: 4096, GPT-3: 16384
-    n_head: Number of Attention Heads
+    n_head: number of attention heads
         Transformer-Base: 8, BERT-base: 12, BERT-large: 16, GPT-3: 96
         d_model must be divided by n_head
-    n_layers: Number of Encoder Layers)
+    n_layers: number of encoder layers
         Small Transformer: 6, BERT-base: 12, BERT-large: 24, GPT-3: 96
-    drop_prob: Dropout Probability
+    drop_prob: dropout probability
     device: torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     '''
-    def __init__(self, encoder_vocab_size, max_len, d_model, ffn_hidden, n_head, n_layers, drop_prob, device):
+    def __init__(self, max_len, d_model, ffn_hidden, encoder_vocab_size, n_head, n_layer, drop_prob, device):
         super().__init__()
         self.embedding = Embedding(d_model = d_model,
                                 max_len = max_len,
@@ -79,7 +76,7 @@ class Encoder(nn.Module):
                                             ffn_hidden = ffn_hidden,
                                             n_head = n_head,
                                             drop_prob = drop_prob)
-                                     for _ in range(n_layers)])
+                                     for _ in range(n_layer)])
 
     def forward(self, x, src_mask):
         x = self.embedding(x)
