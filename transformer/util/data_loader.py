@@ -43,17 +43,18 @@ class DataLoader:
     def _download_and_split_data(self):
         """下载并拆分数据集"""
         data_dir = "./data"
-        os.makedirs(data_dir, exist_ok=True)
-        data_path = os.path.join(data_dir, "deu.txt")
+        os.makedirs(data_dir, exist_ok = True)
+        data_path = os.path.join(data_dir, "deu-eng/deu.txt")
 
         # 下载数据集
+        '''
         if not os.path.exists(data_path):
             zip_path = os.path.join(data_dir, "deu-eng.zip")
             urlretrieve("https://www.manythings.org/anki/deu-eng.zip", zip_path)
             with zipfile.ZipFile(zip_path, "r") as zip_ref:
                 zip_ref.extractall(data_dir)
-        
-        with open(data_path, "r", encoding="utf-8") as f:
+        '''
+        with open(data_path, 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
 
         # 数据切分
