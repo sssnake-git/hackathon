@@ -3,7 +3,10 @@
 
 # cache
 *.pyc
+*/__pycache__
 
 # transformer
-transformer/__pycache__
 transformer/data
+
+# benchmark
+benchmark/data

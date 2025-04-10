@@ -49,7 +49,8 @@ def train(model, iterator, optimizer, criterion, clip):
     epoch_loss = 0
     for i, batch in enumerate(iterator):
         src, trg = batch
-        print(src.shape, trg.shape)
+        if i % 100 == 0:
+            print(src.shape, trg.shape)
 
         optimizer.zero_grad()
         output = model(src, trg[:, :-1])
@@ -62,7 +63,8 @@ def train(model, iterator, optimizer, criterion, clip):
         optimizer.step()
 
         epoch_loss += loss.item()
-        print('step :', round((i / len(iterator)) * 100, 2), '% , loss :', loss.item())
+        if i % 100 == 0:
+            print('step :', round((i / len(iterator)) * 100, 2), '% , loss :', loss.item())
 
     # torch.save(model.state_dict(), './transformer.pth')
     print('Model saved to current path.')
@@ -97,7 +99,7 @@ def evaluate(model, iterator, criterion):
                 except:
                     pass
 
-            total_bleu = sum(total_bleu) / len(total_bleu)
+            total_bleu = sum(total_bleu) / len(total_bleu + 1) # avoid zero division
             batch_bleu.append(total_bleu)
 
     batch_bleu = sum(batch_bleu) / len(batch_bleu)
