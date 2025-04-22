@@ -4,9 +4,18 @@
 # cache
 *.pyc
 */__pycache__
+*.csv
 
 # transformer
 transformer/data
 
+# llm data
+tools/llm/ag_news_csv/
+
 # benchmark
 benchmark/data
+
+# compiler
+*.o
+*.a
+*.so

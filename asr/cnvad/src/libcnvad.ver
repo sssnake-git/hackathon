@@ -1,0 +1,5 @@
+{
+    global:
+        VAD_*;vad_initialize;*_VAD*;
+    local: *;
+};
