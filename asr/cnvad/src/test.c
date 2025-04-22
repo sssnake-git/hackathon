@@ -5,7 +5,7 @@
 #include <memory.h>
 #include <sys/time.h>
 #include "project_config.h"
-#include "cnvad.h"
+#include "vad.h"
 
 #define BOOL char
 #define TRUE 1
@@ -13,7 +13,7 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
-const char* helpstr = "[-t [wav/raw]] audiofile [tagoutfile]";
+const char *helpstr = "[-t [wav/raw]] audiofile [tagoutfile]";
 
 int main(int argc, char* argv[]) {
 

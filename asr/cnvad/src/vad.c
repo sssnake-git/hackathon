@@ -6,7 +6,7 @@
 #include "ring_buf.h"
 #include "project_config.h"
 #include MDL_HEADER_H
-#include "inst_vad.h"
+#include "vad_engine.h"
 
 #define max(a, b)    (((a) > (b)) ? (a) : (b))
 #define min(a, b)    (((a) < (b)) ? (a) : (b))

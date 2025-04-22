@@ -59,12 +59,11 @@ else()
   list(APPEND PLATFORM_LIBS m)
 endif()
 
-
 # --- 源文件定义 ---
 set(
     LIB_CCNR_SOURCE_BASE
-    src/cnvad.c
-    src/inst_vad/inst_vad.c
+    src/vad.c
+    src/engine/vad_engine.c
     src/ccnn_core.c
     src/ring_buf.c
     src/fft_tool.c
@@ -82,7 +81,7 @@ set(LIB_CCNR_SOURCE ${LIB_CCNR_SOURCE_BASE}) # 最终源文件列表
 # --- 包含目录 ---
 include_directories(src)
 include_directories(model)
-include_directories(src/inst_vad)
+include_directories(src/engine)
 
 # --- 库目标 ---
 add_library(
@@ -109,12 +108,10 @@ if(PLATFORM_LIBS)
   target_link_libraries(cnvad PUBLIC ${PLATFORM_LIBS})
 endif()
 
-
 # --- 可执行目标 (测试程序) ---
 add_executable(cnvadtest src/test.c)
 # 测试程序链接静态库版本
 target_link_libraries(cnvadtest PRIVATE cnvad_static)
-
 
 # --- 安装/复制 和 Strip (更好的方式是使用 install() ) ---
 # 创建目标目录
@@ -122,11 +119,10 @@ set(LIBS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/libs)
 set(CNVAD_OUTPUT_LOCATION ${LIBS_OUTPUT_DIR})
 file(MAKE_DIRECTORY ${LIBS_OUTPUT_DIR})
 
-
 # 复制共享库到 libs 目录
 add_custom_command(TARGET cnvad POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CNVAD_OUTPUT_LOCATION} /Users/tianzhe/Documents/code/hackathon/asr/cnvad/build/libs)
+    ${CNVAD_OUTPUT_LOCATION} ${LIBS_OUTPUT_DIR})
 
 # 获取复制后的库文件的完整路径
 # 注意: CMAKE_SHARED_LIBRARY_PREFIX (lib), TARGET_FILE_BASE_NAME (cnvad), CMAKE_SHARED_LIBRARY_SUFFIX (.so/.dylib)

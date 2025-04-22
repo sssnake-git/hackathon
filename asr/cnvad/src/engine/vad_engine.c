@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <math.h>
-#include "inst_vad_intr.h"
-#include "inst_vad.h"
+#include "vad_engine_intr.h"
+#include "vad_engine.h"
 
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
