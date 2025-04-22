@@ -15,7 +15,7 @@
 
 const char* helpstr = "[-t [wav/raw]] audiofile [tagoutfile]";
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 
     int framelen = FRAMESHIFT;
     short data[framelen];

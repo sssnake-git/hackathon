@@ -6,7 +6,7 @@
 #include "ring_buf.h"
 #include "project_config.h"
 #include MDL_HEADER_H
-#include "dqvad.h"
+#include "inst_vad.h"
 
 #define max(a, b)    (((a) > (b)) ? (a) : (b))
 #define min(a, b)    (((a) < (b)) ? (a) : (b))
@@ -71,7 +71,7 @@ void *vad_initialize(void *asr_handle) {
     }
 
     cnvad_engine_init(&_p_vad->vadinst);
-    // DqVad_SetLogOut(_p_vad->vadinst, "2");
+    // Inst_Vad_SetLogOut(_p_vad->vadinst, "2");
 
     cnvad_engine_set_param(_p_vad->vadinst, minSpeech, minTS, minVadTh, vadCoef, leadsil, trailsil);
 
@@ -196,7 +196,7 @@ void reset_vad_all(void *_p_vad) {
     if (!_p_vad)
         return;
     CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
-    DqVad_FullReset(cnvad->vadinst);
+    Inst_Vad_FullReset(cnvad->vadinst);
     memset(cnvad->mdlstate, 0, cnvad->statesize*4);
     cnvad->sp_status = 0;
     cnvad->nIdx = 0;
@@ -206,7 +206,7 @@ void vad_reset(void *_p_vad) {
     if (!_p_vad)
         return;
     CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
-    DqVad_Reset(cnvad->vadinst);
+    Inst_Vad_Reset(cnvad->vadinst);
     cnvad->sp_status = 0;
 }
 
@@ -214,7 +214,7 @@ void vad_release(void *_p_vad) {
     if (_p_vad) {
         CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
         fft_uninit(&cnvad->fft_ctx);
-        DqVad_Close(cnvad->vadinst);
+        Inst_Vad_Close(cnvad->vadinst);
         if (cnvad->ringbuf)
             ringbuf_release(&cnvad->ringbuf);
         if (cnvad->tmp_cache)

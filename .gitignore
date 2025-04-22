@@ -19,3 +19,4 @@ benchmark/data
 *.o
 *.a
 *.so
+build/

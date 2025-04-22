@@ -1,7 +1,7 @@
 #ifndef __VADIENG_INTR__
 #define __VADIENG_INTR__
 
-#include"ringarray.h"
+#include "ringarray.h"
 //#define LOG_ENABLE
 #define DBFIXED
 
@@ -115,6 +115,6 @@ typedef struct {
 #ifdef LOG_ENABLE
     FILE* logFp;
 #endif
-} DqVad;
+} Inst_Vad;
 
 #endif

@@ -8,10 +8,10 @@ extern "C" {
 void cnvad_engine_init(void** self);
 void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, float gapCoef, int LS, int TS);
 int cnvad_engine_process(void* self, int eng, int *offset);
-void DqVad_SetLogOut(void* self, char* path);
-void DqVad_FullReset(void* self);
-void DqVad_Reset(void* self);
-void DqVad_Close(void* self);
+void Inst_Vad_SetLogOut(void* self, char* path);
+void Inst_Vad_FullReset(void* self);
+void Inst_Vad_Reset(void* self);
+void Inst_Vad_Close(void* self);
 
 #ifdef __cplusplus
 }

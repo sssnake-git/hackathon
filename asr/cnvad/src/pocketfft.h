@@ -35,8 +35,22 @@ int rfft_backward(rfft_plan plan, float c[], float fct);
 int rfft_forward(rfft_plan plan, float c[], float fct);
 size_t rfft_length(rfft_plan plan);
 #endif
-struct rfftp_plan_i;
+
+#define NFCT 25
+typedef struct rfftp_fctdata
+{
+    size_t fct;
+    float *tw, *tws;
+} rfftp_fctdata;
+typedef struct rfftp_plan_i
+{
+    size_t length, nfct;
+    float *mem;
+    rfftp_fctdata fct[NFCT];
+} rfftp_plan_i;
+
 typedef struct rfftp_plan_i * rfftp_plan;
+
 rfftp_plan make_rfftp_plan (size_t length);
 int rfftp_forward(rfftp_plan plan, float c[], float fct);
 int rfftp_backward(rfftp_plan plan, float c[], float fct);

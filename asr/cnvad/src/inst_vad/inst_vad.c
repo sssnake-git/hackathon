@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <math.h>
-#include "dqvad_intr.h"
-#include "dqvad.h"
+#include "inst_vad_intr.h"
+#include "inst_vad.h"
 
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
@@ -12,11 +12,11 @@ static float* GapMagic  = NULL;
 #define maigcGap(x, c) \
     ((DBTYPE)((DBMAX-x)*GapMagic[(int)(90.31-(x/DB1))]*c))
 
-void DqVad_UpdateDbBufs(DqVad* vad, DBTYPE currDB);
-void DqVad_EosReset(DqVad* vad);
+void Inst_Vad_UpdateDbBufs(Inst_Vad* vad, DBTYPE currDB);
+void Inst_Vad_EosReset(Inst_Vad* vad);
 
 void cnvad_engine_init(void** self) {
-    DqVad* vad = (DqVad*)malloc(sizeof(DqVad));
+    Inst_Vad* vad = (Inst_Vad*)malloc(sizeof(Inst_Vad));
     if (vad) {
         vad->nMsMinSpeech = 100;
         vad->nMsMinTS = 500;
@@ -85,7 +85,7 @@ void cnvad_engine_init(void** self) {
 }
 
 void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, float gapCoef, int LS, int TS) {
-    DqVad* vad = (DqVad*)self;
+    Inst_Vad* vad = (Inst_Vad*)self;
     vad->nMsMinSpeech = MinSpeech;
     vad->nMsMinTS = MinTS;
 #ifdef DBFIXED
@@ -104,7 +104,7 @@ void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, 
 }
 
 int cnvad_engine_process(void* self, int eng, int *offset) {
-    DqVad* vad = (DqVad*)self;
+    Inst_Vad* vad = (Inst_Vad*)self;
 
     int ret = 0;
     vad->nCurFrameIdx ++;
@@ -125,7 +125,7 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
     fCurrDB = 4.343*log(eng+1);
 #endif
     fCurrDB = max(fCurrDB, vad->nMinVocDb);
-    DqVad_UpdateDbBufs(vad, fCurrDB);
+    Inst_Vad_UpdateDbBufs(vad, fCurrDB);
 
     DBTYPE newmin = fCurrDB;
     RingArray *npBuf = &vad->dbBufs[2].buf;
@@ -353,12 +353,12 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
         if (nMsEosDet >= nMsMinTS && (detectEnding == 2 || (-2 <= udsum4 && udsum4 <= 2))) {
             // printf("eos 1\n");
             *offset = vad->nMsDetTS - vad->nMsLeftTS;
-            DqVad_EosReset(vad);
+            Inst_Vad_EosReset(vad);
             ret = 2;
         } else if (vad->nMsDetTS2 >= nMsMinTS &&  (-2 <= udsum4 && udsum4 <= 2)) {
             // printf("eos 2\n");
             *offset = vad->nMsDetTS2 - (vad->nMsLeftTS + vad->nMsDetTS2Extra);
-            DqVad_EosReset(vad);
+            Inst_Vad_EosReset(vad);
             ret = 2;
         } else {
 #ifdef LOG_ENABLE
@@ -396,7 +396,7 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
     return ret;
 }
 
-void DqVad_UpdateDbBufs(DqVad* vad, DBTYPE currDB) {
+void Inst_Vad_UpdateDbBufs(Inst_Vad *vad, DBTYPE currDB) {
     for (int i = 0; i < 5; i++) {
         AvgDBCalcor* avgDb = &vad->avgDbs[i];
         if (avgDb->flag & vad->curStatus) {
@@ -421,7 +421,7 @@ void DqVad_UpdateDbBufs(DqVad* vad, DBTYPE currDB) {
     }
 }
 
-void DqVad_EosReset(DqVad* vad) {
+void Inst_Vad_EosReset(Inst_Vad *vad) {
     vad->nMsDetSpeech = 0;
     vad->nMsDetSpeech2 = 0;
     vad->nMsDetTS = 0;
@@ -435,8 +435,8 @@ void DqVad_EosReset(DqVad* vad) {
     vad->curStatus = VADST_INNO;
 }
 
-void DqVad_FullReset(void* self) {
-    DqVad* vad = (DqVad*)self;
+void Inst_Vad_FullReset(void* self) {
+    Inst_Vad *vad = (Inst_Vad *)self;
     int i;
     for (i=0; i<2; i++) {
         RingArray_Clear(&vad->dbBufs[i].buf);
@@ -459,17 +459,17 @@ void DqVad_FullReset(void* self) {
     vad->stAvgMin = DBMAX;
     vad->lst100Max = 0;
     vad->nCurFrameIdx = 0;
-    DqVad_EosReset(vad);
+    Inst_Vad_EosReset(vad);
 }
 
-void DqVad_Reset(void* self) {
-    DqVad* vad = (DqVad*)self;
-    DqVad_EosReset(vad);
+void Inst_Vad_Reset(void* self) {
+    Inst_Vad *vad = (Inst_Vad *)self;
+    Inst_Vad_EosReset(vad);
 }
 
 #ifdef LOG_ENABLE
-void DqVad_SetLogOut(void* self, char* path) {
-    DqVad* vad = (DqVad*)self;
+void Inst_Vad_SetLogOut(void* self, char* path) {
+    Inst_Vad *vad = (Inst_Vad *)self;
     if (!path) {
         if (vad->logFp && vad->logFp != stdout && vad->logFp != stderr) {
             fclose(vad->logFp);
@@ -485,9 +485,9 @@ void DqVad_SetLogOut(void* self, char* path) {
 }
 #endif
 
-void DqVad_Close(void* self) {
+void Inst_Vad_Close(void* self) {
     if (self) {
-        DqVad* vad = (DqVad*)self;
+        Inst_Vad *vad = (Inst_Vad *)self;
         BufInfo_Destroy(&vad->dbBufs[0]);
         BufInfo_Destroy(&vad->dbBufs[1]);
         BufInfo_Destroy(&vad->dbBufs[2]);
