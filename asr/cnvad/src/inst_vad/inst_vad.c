@@ -12,10 +12,10 @@ static float* GapMagic  = NULL;
 #define maigcGap(x, c) \
     ((DBTYPE)((DBMAX-x)*GapMagic[(int)(90.31-(x/DB1))]*c))
 
-void Inst_Vad_UpdateDbBufs(Inst_Vad* vad, DBTYPE currDB);
-void Inst_Vad_EosReset(Inst_Vad* vad);
+void vad_engine_updateDbbufs(Inst_Vad* vad, DBTYPE currDB);
+void vad_engine_eos_reset(Inst_Vad* vad);
 
-void cnvad_engine_init(void** self) {
+void vad_engine_init(void** self) {
     Inst_Vad* vad = (Inst_Vad*)malloc(sizeof(Inst_Vad));
     if (vad) {
         vad->nMsMinSpeech = 100;
@@ -84,7 +84,8 @@ void cnvad_engine_init(void** self) {
     *self = vad;
 }
 
-void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, float gapCoef, int LS, int TS) {
+void vad_engine_set_param(void* self, int MinSpeech, 
+    int MinTS, int MinVadTh, float gapCoef, int LS, int TS) {
     Inst_Vad* vad = (Inst_Vad*)self;
     vad->nMsMinSpeech = MinSpeech;
     vad->nMsMinTS = MinTS;
@@ -103,7 +104,7 @@ void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, 
     }
 }
 
-int cnvad_engine_process(void* self, int eng, int *offset) {
+int vad_engine_process(void* self, int eng, int *offset) {
     Inst_Vad* vad = (Inst_Vad*)self;
 
     int ret = 0;
@@ -125,7 +126,7 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
     fCurrDB = 4.343*log(eng+1);
 #endif
     fCurrDB = max(fCurrDB, vad->nMinVocDb);
-    Inst_Vad_UpdateDbBufs(vad, fCurrDB);
+    vad_engine_updateDbbufs(vad, fCurrDB);
 
     DBTYPE newmin = fCurrDB;
     RingArray *npBuf = &vad->dbBufs[2].buf;
@@ -353,12 +354,12 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
         if (nMsEosDet >= nMsMinTS && (detectEnding == 2 || (-2 <= udsum4 && udsum4 <= 2))) {
             // printf("eos 1\n");
             *offset = vad->nMsDetTS - vad->nMsLeftTS;
-            Inst_Vad_EosReset(vad);
+            vad_engine_eos_reset(vad);
             ret = 2;
         } else if (vad->nMsDetTS2 >= nMsMinTS &&  (-2 <= udsum4 && udsum4 <= 2)) {
             // printf("eos 2\n");
             *offset = vad->nMsDetTS2 - (vad->nMsLeftTS + vad->nMsDetTS2Extra);
-            Inst_Vad_EosReset(vad);
+            vad_engine_eos_reset(vad);
             ret = 2;
         } else {
 #ifdef LOG_ENABLE
@@ -396,7 +397,7 @@ int cnvad_engine_process(void* self, int eng, int *offset) {
     return ret;
 }
 
-void Inst_Vad_UpdateDbBufs(Inst_Vad *vad, DBTYPE currDB) {
+void vad_engine_updateDbbufs(Inst_Vad *vad, DBTYPE currDB) {
     for (int i = 0; i < 5; i++) {
         AvgDBCalcor* avgDb = &vad->avgDbs[i];
         if (avgDb->flag & vad->curStatus) {
@@ -421,7 +422,7 @@ void Inst_Vad_UpdateDbBufs(Inst_Vad *vad, DBTYPE currDB) {
     }
 }
 
-void Inst_Vad_EosReset(Inst_Vad *vad) {
+void vad_engine_eos_reset(Inst_Vad *vad) {
     vad->nMsDetSpeech = 0;
     vad->nMsDetSpeech2 = 0;
     vad->nMsDetTS = 0;
@@ -435,7 +436,7 @@ void Inst_Vad_EosReset(Inst_Vad *vad) {
     vad->curStatus = VADST_INNO;
 }
 
-void Inst_Vad_FullReset(void* self) {
+void vad_engine_full_reset(void* self) {
     Inst_Vad *vad = (Inst_Vad *)self;
     int i;
     for (i=0; i<2; i++) {
@@ -459,16 +460,16 @@ void Inst_Vad_FullReset(void* self) {
     vad->stAvgMin = DBMAX;
     vad->lst100Max = 0;
     vad->nCurFrameIdx = 0;
-    Inst_Vad_EosReset(vad);
+    vad_engine_eos_reset(vad);
 }
 
-void Inst_Vad_Reset(void* self) {
+void vad_engine_reset(void* self) {
     Inst_Vad *vad = (Inst_Vad *)self;
-    Inst_Vad_EosReset(vad);
+    vad_engine_eos_reset(vad);
 }
 
 #ifdef LOG_ENABLE
-void Inst_Vad_SetLogOut(void* self, char* path) {
+void vad_engine_set_loglevel(void* self, char* path) {
     Inst_Vad *vad = (Inst_Vad *)self;
     if (!path) {
         if (vad->logFp && vad->logFp != stdout && vad->logFp != stderr) {
@@ -485,7 +486,7 @@ void Inst_Vad_SetLogOut(void* self, char* path) {
 }
 #endif
 
-void Inst_Vad_Close(void* self) {
+void vad_engine_close(void* self) {
     if (self) {
         Inst_Vad *vad = (Inst_Vad *)self;
         BufInfo_Destroy(&vad->dbBufs[0]);

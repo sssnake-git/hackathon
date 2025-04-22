@@ -44,16 +44,10 @@ void *vad_initialize(void *asr_handle) {
         return NULL;
     }
     memset(_p_vad, 0, sizeof(CNVAD_st));
-#if 0
-    Emova_Engine_t *asr_engine = (Emova_Engine_t *)asr_handle;
-    int minSpeech = asr_engine->config->min_speech_sample > 0 ? asr_engine->config->min_speech_sample/16 : 100;
-    int minTS = asr_engine->config->min_ts_sample > 0 ? asr_engine->config->min_ts_sample/16 : 400;
-    float vadCoef = asr_engine->config->vad_sensitivity > 0 ? asr_engine->config->vad_sensitivity : 1.0;
-#else
+
     int minSpeech = 100;
     int minTS = 200;
     float vadCoef = 1.0;
-#endif
     int minVadTh = 35;
     int leadsil = 200;
     int trailsil = 200;
@@ -70,10 +64,10 @@ void *vad_initialize(void *asr_handle) {
         return NULL;
     }
 
-    cnvad_engine_init(&_p_vad->vadinst);
-    // Inst_Vad_SetLogOut(_p_vad->vadinst, "2");
+    vad_engine_init(&_p_vad->vadinst);
+    // vad_engine_set_loglevel(_p_vad->vadinst, "2");
 
-    cnvad_engine_set_param(_p_vad->vadinst, minSpeech, minTS, minVadTh, vadCoef, leadsil, trailsil);
+    vad_engine_set_param(_p_vad->vadinst, minSpeech, minTS, minVadTh, vadCoef, leadsil, trailsil);
 
     fft_init(&_p_vad->fft_ctx);
 
@@ -135,9 +129,9 @@ short vad_add_wav_data(void *_p_vad, short *in_data, short in_nSamples, short **
 #endif
 
         int vadoffset;
-        int vadret = cnvad_engine_process(cnvad->vadinst, outeng, &vadoffset);
+        int vadret = vad_engine_process(cnvad->vadinst, outeng, &vadoffset);
 
-        memmove(input, input+FRAMESHIFT, (FRAMELEN-FRAMESHIFT)*sizeof(int));
+        memmove(input, input + FRAMESHIFT, (FRAMELEN-FRAMESHIFT)*sizeof(int));
 
         ringbuf_memcpy_into(ringbuf, in_data, in_nSamples*sizeof(short));
 
@@ -196,7 +190,7 @@ void reset_vad_all(void *_p_vad) {
     if (!_p_vad)
         return;
     CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
-    Inst_Vad_FullReset(cnvad->vadinst);
+    vad_engine_full_reset(cnvad->vadinst);
     memset(cnvad->mdlstate, 0, cnvad->statesize*4);
     cnvad->sp_status = 0;
     cnvad->nIdx = 0;
@@ -206,7 +200,7 @@ void vad_reset(void *_p_vad) {
     if (!_p_vad)
         return;
     CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
-    Inst_Vad_Reset(cnvad->vadinst);
+    vad_engine_reset(cnvad->vadinst);
     cnvad->sp_status = 0;
 }
 
@@ -214,7 +208,7 @@ void vad_release(void *_p_vad) {
     if (_p_vad) {
         CNVAD_st* cnvad = (CNVAD_st*)_p_vad;
         fft_uninit(&cnvad->fft_ctx);
-        Inst_Vad_Close(cnvad->vadinst);
+        vad_engine_close(cnvad->vadinst);
         if (cnvad->ringbuf)
             ringbuf_release(&cnvad->ringbuf);
         if (cnvad->tmp_cache)

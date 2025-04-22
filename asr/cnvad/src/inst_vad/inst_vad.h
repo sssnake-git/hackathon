@@ -5,13 +5,13 @@
 extern "C" {
 #endif
 
-void cnvad_engine_init(void** self);
-void cnvad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, float gapCoef, int LS, int TS);
-int cnvad_engine_process(void* self, int eng, int *offset);
-void Inst_Vad_SetLogOut(void* self, char* path);
-void Inst_Vad_FullReset(void* self);
-void Inst_Vad_Reset(void* self);
-void Inst_Vad_Close(void* self);
+void vad_engine_init(void** self);
+void vad_engine_set_param(void* self, int MinSpeech, int MinTS, int MinVadTh, float gapCoef, int LS, int TS);
+int vad_engine_process(void* self, int eng, int *offset);
+void vad_engine_set_loglevel(void* self, char* path);
+void vad_engine_full_reset(void* self);
+void vad_engine_reset(void* self);
+void vad_engine_close(void* self);
 
 #ifdef __cplusplus
 }
