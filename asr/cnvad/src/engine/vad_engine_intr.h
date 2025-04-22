@@ -115,6 +115,6 @@ typedef struct {
 #ifdef LOG_ENABLE
     FILE* logFp;
 #endif
-} Inst_Vad;
+} Vad_Engine;
 
 #endif

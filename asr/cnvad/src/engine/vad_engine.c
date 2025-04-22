@@ -12,11 +12,11 @@ static float* GapMagic  = NULL;
 #define maigcGap(x, c) \
     ((DBTYPE)((DBMAX-x)*GapMagic[(int)(90.31-(x/DB1))]*c))
 
-void vad_engine_updateDbbufs(Inst_Vad* vad, DBTYPE currDB);
-void vad_engine_eos_reset(Inst_Vad* vad);
+void vad_engine_updateDbbufs(Vad_Engine *vad, DBTYPE currDB);
+void vad_engine_eos_reset(Vad_Engine *vad);
 
 void vad_engine_init(void** self) {
-    Inst_Vad* vad = (Inst_Vad*)malloc(sizeof(Inst_Vad));
+    Vad_Engine *vad = (Vad_Engine *)malloc(sizeof(Vad_Engine));
     if (vad) {
         vad->nMsMinSpeech = 100;
         vad->nMsMinTS = 500;
@@ -86,7 +86,7 @@ void vad_engine_init(void** self) {
 
 void vad_engine_set_param(void* self, int MinSpeech, 
     int MinTS, int MinVadTh, float gapCoef, int LS, int TS) {
-    Inst_Vad* vad = (Inst_Vad*)self;
+        Vad_Engine *vad = (Vad_Engine *)self;
     vad->nMsMinSpeech = MinSpeech;
     vad->nMsMinTS = MinTS;
 #ifdef DBFIXED
@@ -105,7 +105,7 @@ void vad_engine_set_param(void* self, int MinSpeech,
 }
 
 int vad_engine_process(void* self, int eng, int *offset) {
-    Inst_Vad* vad = (Inst_Vad*)self;
+    Vad_Engine *vad = (Vad_Engine *)self;
 
     int ret = 0;
     vad->nCurFrameIdx ++;
@@ -397,7 +397,7 @@ int vad_engine_process(void* self, int eng, int *offset) {
     return ret;
 }
 
-void vad_engine_updateDbbufs(Inst_Vad *vad, DBTYPE currDB) {
+void vad_engine_updateDbbufs(Vad_Engine *vad, DBTYPE currDB) {
     for (int i = 0; i < 5; i++) {
         AvgDBCalcor* avgDb = &vad->avgDbs[i];
         if (avgDb->flag & vad->curStatus) {
@@ -422,7 +422,7 @@ void vad_engine_updateDbbufs(Inst_Vad *vad, DBTYPE currDB) {
     }
 }
 
-void vad_engine_eos_reset(Inst_Vad *vad) {
+void vad_engine_eos_reset(Vad_Engine *vad) {
     vad->nMsDetSpeech = 0;
     vad->nMsDetSpeech2 = 0;
     vad->nMsDetTS = 0;
@@ -437,7 +437,7 @@ void vad_engine_eos_reset(Inst_Vad *vad) {
 }
 
 void vad_engine_full_reset(void* self) {
-    Inst_Vad *vad = (Inst_Vad *)self;
+    Vad_Engine *vad = (Vad_Engine *)self;
     int i;
     for (i=0; i<2; i++) {
         RingArray_Clear(&vad->dbBufs[i].buf);
@@ -464,13 +464,13 @@ void vad_engine_full_reset(void* self) {
 }
 
 void vad_engine_reset(void* self) {
-    Inst_Vad *vad = (Inst_Vad *)self;
+    Vad_Engine *vad = (Vad_Engine *)self;
     vad_engine_eos_reset(vad);
 }
 
 #ifdef LOG_ENABLE
 void vad_engine_set_loglevel(void* self, char* path) {
-    Inst_Vad *vad = (Inst_Vad *)self;
+    Vad_Engine *vad = (Vad_Engine *)self;
     if (!path) {
         if (vad->logFp && vad->logFp != stdout && vad->logFp != stderr) {
             fclose(vad->logFp);
@@ -488,7 +488,7 @@ void vad_engine_set_loglevel(void* self, char* path) {
 
 void vad_engine_close(void* self) {
     if (self) {
-        Inst_Vad *vad = (Inst_Vad *)self;
+        Vad_Engine *vad = (Vad_Engine *)self;
         BufInfo_Destroy(&vad->dbBufs[0]);
         BufInfo_Destroy(&vad->dbBufs[1]);
         BufInfo_Destroy(&vad->dbBufs[2]);

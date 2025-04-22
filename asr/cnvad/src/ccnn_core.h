@@ -190,7 +190,6 @@ enum CCNR_OP_TYPE {
     OP_PRINTQI,
 #endif
 };
-
 typedef struct CCNR_OP_MAT {
     uint16_t op_type;
     uint16_t row;
@@ -199,7 +198,6 @@ typedef struct CCNR_OP_MAT {
     uint32_t input;
     uint32_t output;
 } CCNR_OP_MAT;
-
 typedef struct CCNR_OP_MATQ {
     uint16_t op_type;
     uint16_t row;

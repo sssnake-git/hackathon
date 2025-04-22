@@ -7,12 +7,12 @@ extern "C" {
 
 void *vad_initialize(void *asr_handle);
 
-void vad_reset(void *pInst_vad);
-void reset_vad_all(void *pInst_vad);
-void vad_release(void *pInst_vad);
+void vad_reset(void *vad_engine);
+void reset_vad_all(void *vad_engine);
+void vad_release(void *vad_engine);
 
-short vad_add_wav_data(void *pInst_vad, short *in_data, short in_nSamples, short **out_nSamples, unsigned int *bos,
-          unsigned int *eos, short *isBOS_or_EOS_Buffer);
+short vad_add_wav_data(void *vad_engine, short *in_data, short in_nSamples, short **out_nSamples, unsigned int *bos,
+        unsigned int *eos, short *isBOS_or_EOS_Buffer);
 
 #ifdef __cplusplus
 }

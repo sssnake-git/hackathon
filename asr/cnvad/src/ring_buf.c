@@ -57,30 +57,22 @@ ringbuf_new(size_t capacity)
     return rb;
 }
 
-size_t
-ringbuf_buffer_size(const struct s_ringbuf_t *rb)
-{
+size_t ringbuf_buffer_size(const struct s_ringbuf_t *rb) {
     return rb->size;
 }
 
-void
-ringbuf_reset(ringbuf_t rb)
-{
+void ringbuf_reset(ringbuf_t rb) {
     rb->head = rb->tail = rb->buf;
 }
 
-void
-ringbuf_release(ringbuf_t *rb)
-{
+void ringbuf_release(ringbuf_t *rb) {
     assert(rb && *rb);
     free((*rb)->buf);
     free(*rb);
     *rb = 0;
 }
 
-size_t
-ringbuf_capacity(const struct s_ringbuf_t *rb)
-{
+size_t ringbuf_capacity(const struct s_ringbuf_t *rb) {
     return ringbuf_buffer_size(rb) - 1;
 }
 
@@ -89,15 +81,11 @@ ringbuf_capacity(const struct s_ringbuf_t *rb)
  * contiguous buffer. You shouldn't normally need to use this function
  * unless you're writing a new ringbuf_* function.
  */
-static const uint8_t *
-ringbuf_end(const struct s_ringbuf_t *rb)
-{
+static const uint8_t *ringbuf_end(const struct s_ringbuf_t *rb) {
     return rb->buf + ringbuf_buffer_size(rb);
 }
 
-size_t
-ringbuf_bytes_free(const struct s_ringbuf_t *rb)
-{
+size_t ringbuf_bytes_free(const struct s_ringbuf_t *rb) {
     if (rb->head >= rb->tail) {
         return ringbuf_capacity(rb) - (rb->head - rb->tail);
     } else {
@@ -105,33 +93,23 @@ ringbuf_bytes_free(const struct s_ringbuf_t *rb)
     }
 }
 
-size_t
-ringbuf_bytes_used(const struct s_ringbuf_t *rb)
-{
+size_t ringbuf_bytes_used(const struct s_ringbuf_t *rb) {
     return ringbuf_capacity(rb) - ringbuf_bytes_free(rb);
 }
 
-int
-ringbuf_is_full(const struct s_ringbuf_t *rb)
-{
+int ringbuf_is_full(const struct s_ringbuf_t *rb) {
     return ringbuf_bytes_free(rb) == 0;
 }
 
-int
-ringbuf_is_empty(const struct s_ringbuf_t *rb)
-{
+int ringbuf_is_empty(const struct s_ringbuf_t *rb) {
     return ringbuf_bytes_free(rb) == ringbuf_capacity(rb);
 }
 
-const void *
-ringbuf_tail(const struct s_ringbuf_t *rb)
-{
+const void *ringbuf_tail(const struct s_ringbuf_t *rb) {
     return rb->tail;
 }
 
-const void *
-ringbuf_head(const struct s_ringbuf_t *rb)
-{
+const void *ringbuf_head(const struct s_ringbuf_t *rb) {
     return rb->head;
 }
 
@@ -140,9 +118,7 @@ ringbuf_head(const struct s_ringbuf_t *rb)
  * contiguous buffer, return the a pointer to the next logical
  * location in the ring buffer.
  */
-static uint8_t *
-ringbuf_nextp(ringbuf_t rb, const uint8_t *p)
-{
+static uint8_t *ringbuf_nextp(ringbuf_t rb, const uint8_t *p) {
     /*
      * The assert guarantees the expression (++p - rb->buf) is
      * non-negative; therefore, the modulus operation is safe and
@@ -152,9 +128,7 @@ ringbuf_nextp(ringbuf_t rb, const uint8_t *p)
     return rb->buf + ((++p - rb->buf) % ringbuf_buffer_size(rb));
 }
 
-size_t
-ringbuf_findchr(const struct s_ringbuf_t *rb, int c, size_t offset)
-{
+size_t ringbuf_findchr(const struct s_ringbuf_t *rb, int c, size_t offset) {
     const uint8_t *bufend = ringbuf_end(rb);
     size_t bytes_used = ringbuf_bytes_used(rb);
     if (offset >= bytes_used) {
@@ -173,9 +147,7 @@ ringbuf_findchr(const struct s_ringbuf_t *rb, int c, size_t offset)
     }
 }
 
-size_t
-ringbuf_memset(ringbuf_t dst, int c, size_t len)
-{
+size_t ringbuf_memset(ringbuf_t dst, int c, size_t len) {
     const uint8_t *bufend = ringbuf_end(dst);
     size_t nwritten = 0;
     size_t count = MIN(len, ringbuf_buffer_size(dst));
@@ -204,9 +176,7 @@ ringbuf_memset(ringbuf_t dst, int c, size_t len)
     return nwritten;
 }
 
-void *
-ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
-{
+void *ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count) {
     const uint8_t *u8src = src;
     const uint8_t *bufend = ringbuf_end(dst);
     int overflow = count > ringbuf_bytes_free(dst);
@@ -234,9 +204,7 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
     return dst->head;
 }
 
-ssize_t
-ringbuf_recv(int fd, ringbuf_t rb, size_t count)
-{
+ssize_t ringbuf_recv(int fd, ringbuf_t rb, size_t count) {
     const uint8_t *bufend = ringbuf_end(rb);
     size_t nfree = ringbuf_bytes_free(rb);
 
@@ -263,9 +231,7 @@ ringbuf_recv(int fd, ringbuf_t rb, size_t count)
     return n;
 }
 
-void *
-ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
-{
+void *ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count) {
     size_t bytes_used = ringbuf_bytes_used(src);
     if (count > bytes_used) {
         return 0;
@@ -293,9 +259,7 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
     return src->tail;
 }
 
-ssize_t
-ringbuf_write(int fd, ringbuf_t rb, size_t count)
-{
+ssize_t ringbuf_write(int fd, ringbuf_t rb, size_t count) {
     size_t bytes_used = ringbuf_bytes_used(rb);
     if (count > bytes_used) {
         return 0;
@@ -320,9 +284,7 @@ ringbuf_write(int fd, ringbuf_t rb, size_t count)
     return n;
 }
 
-void *
-ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
-{
+void *ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count) {
     size_t src_bytes_used = ringbuf_bytes_used(src);
     if (count > src_bytes_used) {
         return 0;
@@ -361,9 +323,7 @@ ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
     return dst->head;
 }
 
-void *
-ringbuf_remove_oldest(ringbuf_t src, size_t count)
-{
+void *ringbuf_remove_oldest(ringbuf_t src, size_t count) {
     size_t src_bytes_used = ringbuf_bytes_used(src);
     if (count > src_bytes_used) {
         return 0;
@@ -383,9 +343,7 @@ ringbuf_remove_oldest(ringbuf_t src, size_t count)
     return src->tail;
 }
 
-void *
-ringbuf_memcpy_from_without_remove(void *dst, ringbuf_t src, size_t count)
-{
+void *ringbuf_memcpy_from_without_remove(void *dst, ringbuf_t src, size_t count) {
     size_t bytes_used = ringbuf_bytes_used(src);
     if (count > bytes_used) {
         return 0;

@@ -47,13 +47,6 @@ void fft_forward(fft_ctx_t *fft_ctx, const int* input, int* output, float *fft_b
 #else
     ccrec_feat_rfft(fft_buf, FFTLEN, FFTLEN);
 #endif
-    // printf("\n");
-    // for (i=0; i<FFTLEN; i++) {
-    //     printf("%d ", (int)(fft_buf[i]));
-    //     if (i%16 == 15)
-    //         printf("\n");
-    // }
-    // printf("\n");
 
     if (fft_buf[0]>0) {
         output[0] = fft_buf[0]/FFTLEN;
@@ -72,10 +65,10 @@ void fft_forward(fft_ctx_t *fft_ctx, const int* input, int* output, float *fft_b
     else
         output[i] = -fft_buf[i*2-1]/FFTLEN + 1;
 #else
-    i=1;
-    for (; i<FFTLEN/2; i++) {
-        float amp = (float)sqrt(fft_buf[i*2]*fft_buf[i*2]+fft_buf[i*2+1]*fft_buf[i*2+1]);
-        output[i] = amp/FFTLEN + 1;
+    i = 1;
+    for (; i < FFTLEN / 2; i++) {
+        float amp = (float)sqrt(fft_buf[i * 2] * fft_buf[i * 2] + fft_buf[i * 2 + 1] * fft_buf[i * 2 + 1]);
+        output[i] = amp / FFTLEN + 1;
     }
     if (fft_buf[1] > 0)
         output[i] = fft_buf[1]/FFTLEN + 1;
