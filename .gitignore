@@ -23,3 +23,12 @@ benchmark/data
 *.a
 *.so
 build/
+
+# algorithm
+cav_build/dataset
+cav_build/models
+cav_build/runs
+cav_build/*.bin
+cav_build/output.xlsx
+cav_build/*.png
+cav_build/traced_model.pt
