@@ -1,5 +1,5 @@
-#ifndef __VADIENG_INTR__
-#define __VADIENG_INTR__
+#ifndef __VAD_ENGINE_INTR__
+#define __VAD_ENGINE_INTR__
 
 #include "ringarray.h"
 //#define LOG_ENABLE

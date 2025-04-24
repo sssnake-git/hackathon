@@ -10,8 +10,8 @@
  *  \author Martin Reinecke
  */
 
-#ifndef POCKETFFT_H
-#define POCKETFFT_H
+#ifndef __POCKETFFT_H__
+#define __POCKETFFT_H__
 
 #include <stdlib.h>
 

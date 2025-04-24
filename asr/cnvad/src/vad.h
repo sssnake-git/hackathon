@@ -1,5 +1,5 @@
-#ifndef __LIBCNVAD_H__
-#define __LIBCNVAD_H__
+#ifndef __VAD_H__
+#define __VAD_H__
 
 #ifdef __cplusplus
 extern "C" {

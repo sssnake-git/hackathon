@@ -1,5 +1,5 @@
-#ifndef __CNVAD_ENGINE__
-#define __CNVAD_ENGINE__
+#ifndef __VAD_ENGINE_H__
+#define __VAD_ENGINE_H__
 
 #ifdef __cplusplus
 extern "C" {

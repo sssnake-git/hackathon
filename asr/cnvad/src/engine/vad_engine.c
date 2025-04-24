@@ -436,7 +436,7 @@ void vad_engine_eos_reset(Vad_Engine *vad) {
     vad->curStatus = VADST_INNO;
 }
 
-void vad_engine_full_reset(void* self) {
+void vad_engine_full_reset(void *self) {
     Vad_Engine *vad = (Vad_Engine *)self;
     int i;
     for (i=0; i<2; i++) {

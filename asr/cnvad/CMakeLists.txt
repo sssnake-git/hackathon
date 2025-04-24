@@ -109,7 +109,7 @@ if(PLATFORM_LIBS)
 endif()
 
 # --- 可执行目标 (测试程序) ---
-add_executable(cnvadtest src/test.c)
+add_executable(cnvadtest src/main.c)
 # 测试程序链接静态库版本
 target_link_libraries(cnvadtest PRIVATE cnvad_static)
 

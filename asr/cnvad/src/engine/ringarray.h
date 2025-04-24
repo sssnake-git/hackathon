@@ -2,8 +2,8 @@
  *  Author liudongqiang @ cerence             *
  **********************************************/
 
-#ifndef __RING_ARRAY_H__
-#define __RING_ARRAY_H__
+#ifndef __RINGARRAY_H__
+#define __RINGARRAY_H__
 
 #include <stdlib.h>
 #include <string.h>
@@ -44,26 +44,11 @@ void RingArray_Destroy(RingArray* rb) {
 int RingArray_Size(RingArray* rb) {
     return rb->cached_;
 }
-#if 0
-int RingArray_Capacity(RingArray* rb) {
-    return rb->size_;
-}
-#endif
+
 int RingArray_IsFull(RingArray* rb) {
     return rb->cached_ == rb->size_;
 }
-#if 0
-void RingArray_SetAll(RingArray* rb, const int value) {
-    if (rb->size_ > 0) {
-        for (int i = 0; i < rb->size_; i++) {
-            rb->buffer_[i] = value;
-        }
-        rb->front_ = 0;
-        rb->back_ = 0;
-        rb->cached_ = rb->size_;
-    }
-}
-#endif
+
 int RingArray_Write(RingArray* rb, const int value) {
     if (rb->cached_ < rb->size_) {
         rb->buffer_[rb->front_] = value;
@@ -76,61 +61,7 @@ int RingArray_Write(RingArray* rb, const int value) {
     }
     return 0;
 }
-#if 0
-int RingArray_WriteData(RingArray* rb, const int* data, int size) {
-    const int* data_pos = data;
-    while (rb->cached_ < rb->size_ && size > 0) {
-        int copysize = size;
-        if (rb->front_ >= rb->back_) {
-            if (rb->front_ + size > rb->size_) {
-                copysize = rb->size_ - rb->front_;
-            }
-            memcpy(rb->buffer_ + rb->front_, data_pos, copysize * sizeof(int));
-        } else {
-            int leftsize = rb->back_ - rb->front_;
-            if (copysize > leftsize) {
-                copysize = leftsize;
-            }
-            memcpy(rb->buffer_ + rb->front_, data_pos, copysize * sizeof(int));
-        }
-        rb->front_ += copysize;
-        data_pos += copysize;
-        rb->cached_ += copysize;
-        size -= copysize;
-        if (rb->front_ == rb->size_) {
-            rb->front_ = 0;
-        }
-    }
-    return (int)(data_pos - data);
-}
 
-int RingArray_Read(RingArray* rb, int* data, int size) {
-    int* data_pos = data;
-    while (rb->cached_ > 0 && size > 0) {
-        int readsize = size;
-        if (rb->back_ < rb->front_) {
-            if (rb->cached_ < readsize) {
-                readsize = rb->front_ - rb->back_;
-            }
-            memcpy(data_pos, rb->buffer_ + rb->back_, readsize * sizeof(int));
-        } else {
-            int leftsize = rb->size_ - rb->back_;
-            if (readsize > leftsize) {
-                readsize = leftsize;
-            }
-            memcpy(data_pos, rb->buffer_ + rb->back_, readsize * sizeof(int));
-        }
-        rb->back_ += readsize;
-        data_pos += readsize;
-        rb->cached_ -= readsize;
-        size -= readsize;
-        if (rb->back_ == rb->size_) {
-            rb->back_ = 0;
-        }
-    }
-    return (int)(data_pos - data);
-}
-#endif
 int RingArray_Max(RingArray* rb, int size) {
     int max = INT_MIN;
     int end = rb->back_ < rb->front_ ? rb->front_ : rb->size_;
@@ -242,4 +173,4 @@ int RingArray_Get(RingArray* rb, int idx) {
     return rb->buffer_[idx];
 }
 
-#endif //__RING_ARRAY_H__
+#endif //__RINGARRAY_H__

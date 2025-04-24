@@ -1,5 +1,5 @@
-#ifndef INCLUDED_RINGBUF_H
-#define INCLUDED_RINGBUF_H
+#ifndef __RING_BUF_H__
+#define __RING_BUF_H__
 
 /*
  * ringbuf.h - C ring buffer (FIFO) interface.
