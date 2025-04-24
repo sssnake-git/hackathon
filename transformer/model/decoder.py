@@ -12,12 +12,12 @@ class DecoderLayer(nn.Module):
     def __init__(self, d_model, ffn_hidden, n_head, drop_prob):
         super(DecoderLayer, self).__init__()
         self.self_attention = MultiHeadAttention(d_model = d_model, n_head = n_head)
-        self.norm1 = LayerNorm(d_model = d_model)
-        self.dropout1 = nn.Dropout(p = drop_prob)
+        self.norm1 = LayerNorm(d_model=d_model)
+        self.dropout1 = nn.Dropout(p=drop_prob)
 
         self.encoder_decoder_attention = MultiHeadAttention(d_model = d_model, n_head = n_head)
-        self.norm2 = LayerNorm(d_model = d_model)
-        self.dropout2 = nn.Dropout(p = drop_prob)
+        self.norm2 = LayerNorm(d_model=d_model)
+        self.dropout2 = nn.Dropout(p=drop_prob)
 
         self.ffn = FeedForward(d_model=d_model, hidden=ffn_hidden, drop_prob=drop_prob)
         self.norm3 = LayerNorm(d_model=d_model)
@@ -72,16 +72,16 @@ class Decoder(nn.Module):
     '''
     def __init__(self, decoder_vocab_size, max_len, d_model, ffn_hidden, n_head, n_layer, drop_prob, device):
         super().__init__()
-        self.embedding = Embedding(d_model = d_model,
-                                drop_prob = drop_prob,
-                                max_len = max_len,
-                                vocab_size = decoder_vocab_size,
-                                device = device)
+        self.embedding = Embedding(d_model=d_model,
+                                drop_prob=drop_prob,
+                                max_len=max_len,
+                                vocab_size=decoder_vocab_size,
+                                device=device)
 
-        self.layers = nn.ModuleList([DecoderLayer(d_model = d_model,
-                                                ffn_hidden = ffn_hidden,
-                                                n_head = n_head,
-                                                drop_prob = drop_prob)
+        self.layers = nn.ModuleList([DecoderLayer(d_model=d_model,
+                                                ffn_hidden=ffn_hidden,
+                                                n_head=n_head,
+                                                drop_prob=drop_prob)
                                      for _ in range(n_layer)])
 
         self.linear = nn.Linear(d_model, decoder_vocab_size)

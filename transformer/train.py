@@ -17,32 +17,32 @@ def initialize_weights(m):
     if hasattr(m, 'weight') and m.weight.dim() > 1:
         nn.init.kaiming_uniform(m.weight.data)
 
-model = Transformer(src_pad_idx = src_pad_idx,
-                    trg_pad_idx = trg_pad_idx,
-                    trg_sos_idx = trg_sos_idx,
-                    d_model = d_model,
-                    encoder_vocab_size = enc_voc_size,
-                    decoder_vocab_size = dec_voc_size,
-                    max_len = max_len,
-                    ffn_hidden = ffn_hidden,
-                    n_head = n_head,
-                    n_layer = n_layer,
-                    drop_prob = drop_prob,
-                    device = device).to(device)
+model = Transformer(src_pad_idx=src_pad_idx,
+                    trg_pad_idx=trg_pad_idx,
+                    trg_sos_idx=trg_sos_idx,
+                    d_model=d_model,
+                    encoder_vocab_size=enc_voc_size,
+                    decoder_vocab_size=dec_voc_size,
+                    max_len=max_len,
+                    ffn_hidden=ffn_hidden,
+                    n_head=n_head,
+                    n_layer=n_layer,
+                    drop_prob=drop_prob,
+                    device=device).to(device)
 
 print(f'The model has {count_parameters(model):,} trainable parameters')
 model.apply(initialize_weights)
-optimizer = Adam(params = model.parameters(),
-                 lr = init_lr,
-                 weight_decay = weight_decay,
-                 eps = adam_eps)
+optimizer = Adam(params=model.parameters(),
+                 lr=init_lr,
+                 weight_decay=weight_decay,
+                 eps=adam_eps)
 
-scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer = optimizer,
-                                                 verbose = True,
-                                                 factor = factor,
-                                                 patience = patience)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer,
+                                                 verbose=True,
+                                                 factor=factor,
+                                                 patience=patience)
 
-criterion = nn.CrossEntropyLoss(ignore_index = src_pad_idx)
+criterion = nn.CrossEntropyLoss(ignore_index=src_pad_idx)
 
 def train(model, iterator, optimizer, criterion, clip):
     model.train()
@@ -91,10 +91,10 @@ def evaluate(model, iterator, criterion):
                 try:
                     src_i, trg_i = batch
                     trg_words = idx_to_word(trg_i[j], loader.target.vocab)
-                    output_words = output[j].max(dim = 1)[1]
+                    output_words = output[j].max(dim=1)[1]
                     output_words = idx_to_word(output_words, loader.target.vocab)
-                    bleu = get_bleu(hypotheses = output_words.split(), 
-                                reference = trg_words.split())
+                    bleu = get_bleu(hypotheses=output_words.split(), 
+                                reference=trg_words.split())
                     total_bleu.append(bleu)
                 except:
                     pass
@@ -143,4 +143,4 @@ def run(total_epoch, best_loss):
         print(f'\tBLEU Score: {bleu:.3f}')
 
 if __name__ == '__main__':
-    run(total_epoch = epoch, best_loss = inf)
+    run(total_epoch=epoch, best_loss=inf)

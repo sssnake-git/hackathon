@@ -155,7 +155,7 @@ class EncoderBlock(nn.Module):
         ffn_out = self.ffn(x)
         return self.norm2(x + ffn_out)
 
-class MyTransformer(nn.Module):
+class CavTransformer(nn.Module):
     def __init__(self, num_layers=3,dim_feedforward=24,dropout=0.5):
         super().__init__()
 
@@ -439,7 +439,7 @@ class CustomDataset(Dataset):
         # 返回features和label
         return self.x[idx], self.y[idx]
 
-class ZaoqiangDataset(Dataset):
+class CavDataset(Dataset):
     def __init__(self, features, labels):
         self.features = torch.FloatTensor(features)
         self.labels = torch.FloatTensor(labels)
@@ -523,8 +523,8 @@ def prepare_cav_build_data(file_path, batch_size=128):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
     # 创建数据加载器
-    train_dataset = ZaoqiangDataset(X_train, y_train)
-    test_dataset = ZaoqiangDataset(X_test, y_test)
+    train_dataset = CavDataset(X_train, y_train)
+    test_dataset = CavDataset(X_test, y_test)
     # train_dataset = CustomDataset(X_train, y_train)
     # test_dataset = CustomDataset(X_test, y_test)
 
@@ -696,7 +696,7 @@ if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    model = MyTransformer(num_layers=3, dim_feedforward=12, dropout=0.3) 
+    model = CavTransformer(num_layers=3, dim_feedforward=12, dropout=0.3) 
     #10.6：-relu，mean：0.60664，10.4:-relu，mean：0.5956，10.7：0.5929, 10.1：-relu，mean：0.5959,
     print(model)
 

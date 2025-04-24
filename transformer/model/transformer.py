@@ -16,23 +16,23 @@ class Transformer(nn.Module):
         self.trg_pad_idx = trg_pad_idx
         self.trg_sos_idx = trg_sos_idx
         self.device = device
-        self.encoder = Encoder(d_model = d_model,
-                               max_len = max_len,
-                               ffn_hidden = ffn_hidden,
-                               encoder_vocab_size = encoder_vocab_size,
-                               n_head = n_head,
-                               n_layer = n_layer,
-                               drop_prob = drop_prob,
-                               device = device)
+        self.encoder = Encoder(d_model=d_model,
+                               max_len=max_len,
+                               ffn_hidden=ffn_hidden,
+                               encoder_vocab_size=encoder_vocab_size,
+                               n_head=n_head,
+                               n_layer=n_layer,
+                               drop_prob=drop_prob,
+                               device=device)
 
-        self.decoder = Decoder(d_model = d_model,
-                               n_head = n_head,
-                               max_len = max_len,
-                               ffn_hidden = ffn_hidden,
-                               decoder_vocab_size = decoder_vocab_size,
-                               drop_prob = drop_prob,
-                               n_layer = n_layer,
-                               device = device)
+        self.decoder = Decoder(d_model=d_model,
+                               n_head=n_head,
+                               max_len=max_len,
+                               ffn_hidden=ffn_hidden,
+                               decoder_vocab_size=decoder_vocab_size,
+                               drop_prob=drop_prob,
+                               n_layer=n_layer,
+                               device=device)
 
     def forward(self, src, trg):
         src_mask = self.make_src_mask(src)

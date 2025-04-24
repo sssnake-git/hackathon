@@ -22,7 +22,7 @@ class PositionalEncoding(nn.Module):
         self.encoding = torch.zeros(max_len, d_model, device=device)
         self.encoding.requires_grad = False  # we don't need to compute gradient
 
-        pos = torch.arange(0, max_len, device = device)
+        pos = torch.arange(0, max_len, device=device)
         pos = pos.float().unsqueeze(dim = 1)
         # 1D => 2D unsqueeze to represent word's position
 
