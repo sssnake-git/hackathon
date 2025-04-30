@@ -12,7 +12,7 @@ lora_checkpoint = safe_snapshot_download('/Users/tianzhe/Documents/code/weights/
 # from transformers import AutoModelForCausalLM, AutoTokenizer
 # base_model = AutoModelForCausalLM.from_pretrained(base_model_path, trust_remote_code=True, device_map='cpu') # Load on CPU to merge
 # tokenizer = AutoTokenizer.from_pretrained(base_model_path, trust_remote_code=True)
-model, tokenizer = get_model_tokenizer(base_model_path, trust_remote_code = True) # Assuming this loads the base
+model, tokenizer = get_model_tokenizer(base_model_path, trust_remote_code=True) # Assuming this loads the base
 
 # --- Load LoRA and Merge ---
 # Note: Ensure the PeftModel.from_pretrained path structure is correct for your swift output

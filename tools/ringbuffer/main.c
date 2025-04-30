@@ -32,7 +32,7 @@ int main()
             break;
             default :
                 if (c != '\n') {
-                    WriteRingBuff(r_buf, (char*)&c, 1);
+                    WriteRingBuff(r_buf, (char *)&c, 1);
                 }
             break;
         }
