@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef enum { RED, BLACK } Color;
+typedef enum { RED, BLACK } red_black_color;
 
 typedef struct red_black_node {
     int key;
-    Color color;
+    red_black_color color;
     struct red_black_node *left, *right, *parent;
 } red_black_node;
 

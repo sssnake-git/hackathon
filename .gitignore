@@ -32,3 +32,6 @@ cav_build/*.bin
 cav_build/output.xlsx
 cav_build/*.png
 cav_build/traced_model.pt
+
+# machine_learning
+machine_learning/dbscan/*.png
