@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 '''
-参数调整提示:
+hints:
     如果检测到的异常点太少(或没有)
         尝试减小 eps
         尝试减小 min_samples
@@ -20,9 +20,9 @@ import seaborn as sns
 def load_data(file_path):
     '''
     parameter:
-        file_path (str): 数据集文件的路径。
+        file_path (str): 数据集文件的路径.
     return:
-        pandas.DataFrame: 加载的数据集。
+        pandas.DataFrame: 加载的数据集.
     '''
     try:
         data = pd.read_csv(file_path)
@@ -41,8 +41,8 @@ def preprocess_data(df):
     parameter:
         df (pandas.DataFrame): input data frame.
     return:
-        pandas.DataFrame: 经过预处理的数据框副本（仅包含特征）。
-        pandas.Series: 真实的标签。
+        pandas.DataFrame: 经过预处理的数据框副本（仅包含特征）.
+        pandas.Series: 真实的标签.
     '''
     if df is None:
         return None, None
@@ -94,18 +94,18 @@ def run_dbscan_anomaly_detection(X, eps_param, min_samples_param):
 def evaluate_and_visualize_results(y_true, dbscan_labels, X_eval=None, plot=False):
     '''
     parameter:
-        y_true (pandas.Series): 真实的标签。
-        dbscan_labels (numpy.ndarray): DBSCAN 预测的标签。
-        X_eval (pandas.DataFrame, 可选): 用于可视化的特征数据。
+        y_true (pandas.Series): 真实的标签.
+        dbscan_labels (numpy.ndarray): DBSCAN 预测的标签.
+        X_eval (pandas.DataFrame, 可选): 用于可视化的特征数据.
     '''
     if y_true is None or dbscan_labels is None:
-        print('无法评估, 输入数据不完整。')
+        print('无法评估, 输入数据不完整.')
         return
 
     # convert DBSCAN labels, 0: normal, 1: abnoraml
-    # DBSCAN 标记为 -1 的是异常, 其他簇内的点视为正常
+    # -1 abnormal, other normal
     y_pred_dbscan = np.zeros_like(dbscan_labels)
-    y_pred_dbscan[dbscan_labels == -1] = 1 # 将DBSCAN的噪声点标记为1 (异常)
+    y_pred_dbscan[dbscan_labels == -1] = 1 # change abnormals from -1 to 1
 
     # calculate confusion matrix
     cm = confusion_matrix(y_true, y_pred_dbscan)
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     X_features, y_labels = preprocess_data(credit_card_data)
 
     if USE_SAMPLE and SAMPLE_FRACTION < 1.0:
-        # print(f'\n由于数据集较大, 将使用 {SAMPLE_FRACTION * 100:.1f}% 的随机子样本进行DBSCAN。')
+        # print(f'\n由于数据集较大, 将使用 {SAMPLE_FRACTION * 100:.1f}% 的随机子样本进行DBSCAN.')
         sample_indices = np.random.choice(X_features.index,
                                             size=int(len(X_features) * SAMPLE_FRACTION),
                                             replace=False)
